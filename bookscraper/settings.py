@@ -7,16 +7,26 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 BOT_NAME = "bookscraper"
 
 SPIDER_MODULES = ["bookscraper.spiders"]
 NEWSPIDER_MODULE = "bookscraper.spiders"
 
+SCRAPEOS_API_KEY = os.getenv('scrapeops_api_key')
+SCRAPEOS_FAKE_USER_AGENTS_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'
+SCRAPEOS_FAKE_USER_AGENTS_ENABLED = True
+SCRAPEOS_NUM_RESULTS = 50
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = "bookscraper (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 32
@@ -49,9 +59,10 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    "bookscraper.middlewares.BookscraperDownloaderMiddleware": 543,
-# }
+DOWNLOADER_MIDDLEWARES = {
+    "bookscraper.middlewares.BookscraperDownloaderMiddleware": 543,
+    "bookscraper.middlewares.ScrapeOpsFakeUserAgentMiddleware": 544,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

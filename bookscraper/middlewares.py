@@ -4,6 +4,9 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from urllib.parse import urlencode
+from random import randint
+import requests
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
@@ -101,3 +104,40 @@ class BookscraperDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+
+
+class ScrapeOpsFakeUserAgentMiddleware:
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler.settings)
+
+    def __init__(self, settings):
+        self.scrapeops_api_key = settings.get('SCRAPEOS_API_KEY')
+        self.scrapeops_endpoint = settings.get('SCRAPEOS_FAKE_USER_AGENTS_ENDPOINT')
+        self.scrapeops_fake_user_agents_is_enabled = settings.get('SCRAPEOS_FAKE_USER_AGENTS_ENABLED', False)
+        self.scrapeops_num_results = settings.get('SCRAPEOS_NUM_RESULTS')
+        self.user_agents_list = []
+        self.get_user_agents_list()
+        self.scrapeops_fake_user_agents_enabled()
+
+    def get_user_agents_list(self):
+        payload = {'api_key': self.scrapeops_api_key}
+
+        if self.scrapeops_num_results is not None:
+            payload['num_results'] = self.scrapeops_num_results
+
+        response = requests.get(self.scrapeops_endpoint, params=urlencode(payload)).json()
+        self.user_agents_list = response.get('result', [])
+
+    def get_random_user_agent(self):
+        return self.user_agents_list[randint(0, len(self.user_agents_list) - 1)]
+
+    def scrapeops_fake_user_agents_enabled(self):
+        if self.scrapeops_api_key is None or self.scrapeops_api_key == '':
+            self.scrapeops_fake_user_agents_is_enabled = False
+        else:
+            self.scrapeops_fake_user_agents_is_enabled = True
+
+    def process_request(self, request, spider):
+        if self.scrapeops_fake_user_agents_is_enabled:
+            request.headers['User-Agent'] = self.get_random_user_agent()
