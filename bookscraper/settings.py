@@ -19,7 +19,9 @@ NEWSPIDER_MODULE = "bookscraper.spiders"
 
 SCRAPEOS_API_KEY = os.getenv('scrapeops_api_key')
 SCRAPEOS_FAKE_USER_AGENTS_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'
-SCRAPEOS_FAKE_USER_AGENTS_ENABLED = True
+SCRAPEOS_FAKE_BROWSER_HEADERS_ENDPOINT = 'https://headers.scrapeops.io/v1/browser-headers?'
+SCRAPEOS_FAKE_USER_AGENTS_IS_ENABLED = True
+SCRAPEOS_FAKE_BROWSER_HEADERS_IS_ENABLED = True
 SCRAPEOS_NUM_RESULTS = 50
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -60,8 +62,9 @@ ROBOTSTXT_OBEY = False
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    "bookscraper.middlewares.BookscraperDownloaderMiddleware": 543,
-    "bookscraper.middlewares.ScrapeOpsFakeUserAgentMiddleware": 544,
+    "bookscraper.middlewares.BookscraperDownloaderMiddleware": 0,
+    # "bookscraper.middlewares.ScrapeOpsFakeUserAgentMiddleware": 1,
+    "bookscraper.middlewares.ScrapeOpsFakeBrowserHeaderAgentMiddleware": 2
 }
 
 # Enable or disable extensions
