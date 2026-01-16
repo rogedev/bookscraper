@@ -60,7 +60,7 @@ toml==0.10.2
 traitlets==5.11.2
 Twisted>=24.7.0rc1
 typing_extensions==4.8.0
-urllib3==2.5.0
+urllib3==2.6.3
 w3lib==2.1.2
 wcwidth==0.2.8
 zope.interface==6.1
